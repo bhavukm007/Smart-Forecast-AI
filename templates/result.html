@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>AI Forecast Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a, #020617);
+            color: white;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+            padding: 30px 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .card {
+            background: rgba(255,255,255,0.05);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            transition: 0.3s;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        canvas {
+            background: #0f172a;   /* DARK instead of white */
+            border-radius: 10px;
+            padding: 10px;
+        }
+
+        .full {
+            grid-column: span 2;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>📊 AI Forecast Dashboard</h1>
+
+<div class="grid">
+
+<div class="card">
+    <h2>📈 Summary</h2>
+    <p><b>Forecast:</b> {{ forecast[-1].yhat | round(2) }} 
+        ({{ ((forecast[-1].yhat - baseline)/baseline * 100)|round(1) }}% vs baseline)
+    </p>
+    <p><b>Baseline:</b> {{ baseline }}</p>
+    <p><b>Accuracy:</b> {{ accuracy }}%</p>
+    <p><b>Anomalies:</b> {{ anomalies|length }}</p>
+</div>
+
+<div class="card">
+    <h2>⚡ Scenario Impact</h2>
+    <p>
+        {{ ((scenario[-1].yhat - forecast[-1].yhat)/forecast[-1].yhat * 100)|round(2) if forecast and forecast[-1].yhat != 0 else 0 }}% change
+    </p>
+</div>
+
+<div class="card full">
+    <canvas id="chart"></canvas>
+</div>
+
+<div class="card full">
+    <h2>🧠 Explanation</h2>
+    <p>{{ explanation }}</p>
+</div>
+
+</div>
+
+</div>
+
+<script>
+const forecast = JSON.parse('{{ forecast | tojson | safe }}');
+const scenario = JSON.parse('{{ scenario | tojson | safe }}');
+const anomalies = JSON.parse('{{ anomalies | tojson | safe }}');
+const labels = forecast.map(d => d.ds);
+const values = forecast.map(d => d.yhat);
+const scenarioValues = scenario.map(d => d.yhat);
+const upper = forecast.map(d => d.yhat_upper);
+const lower = forecast.map(d => d.yhat_lower);
+const anomalyPoints = new Array(labels.length).fill(null);
+
+anomalies.forEach(a => {
+    const index = labels.indexOf(a.date.substring(0,10));
+    if (index !== -1) {
+        anomalyPoints[index] = a.value;
+    }
+});
+new Chart(document.getElementById("chart"), {
+    type: "line",
+    data: {
+        labels: labels,
+        datasets: [
+            {
+                label: "Forecast",
+                data: values,
+                borderColor: "#38bdf8",
+                borderWidth: 2,
+                tension: 0.3
+            },
+            {
+                label: "Scenario",
+                data: scenarioValues,
+                borderColor: "#f43f5e",
+                borderWidth: 2,
+                tension: 0.4  
+},
+            {
+                label: "Upper Bound",
+                data: upper,
+                borderColor: "#22c55e",
+                borderDash: [5,5],
+                borderWidth: 1
+            },
+            {
+                label: "Lower Bound",
+                data: lower,
+                borderColor: "#22c55e",
+                borderDash: [5,5],
+                borderWidth: 1,
+                fill: '-1',
+                backgroundColor: "rgba(34,197,94,0.3)"
+            },
+            {
+                label: "Anomalies",
+                data: anomalyPoints,
+                borderColor: "red",
+                backgroundColor: "red",
+                pointRadius: 5,
+                spanGaps: true,
+                showLine: false
+            }
+        ]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                labels: { color: "white" }
+            }
+        },
+        scales: {
+            x: {
+                ticks: { color: "#94a3b8" }
+            },
+            y: {
+                ticks: { color: "#94a3b8" }
+            }
+        }
+    }
+});
+</script>
+
+</body>
+</html>

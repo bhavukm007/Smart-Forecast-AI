@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Smart Forecast AI</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+        }
+
+        .card {
+            background: rgba(255,255,255,0.05);
+            padding: 40px;
+            border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        input, button {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            width: 100%;
+        }
+
+        button {
+            background: #38bdf8;
+            color: black;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0ea5e9;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="card">
+    <h1>Smart Forecast AI</h1>
+
+    <form action="/predict" method="post" enctype="multipart/form-data">
+    
+    <input type="file" name="file" required>
+
+    <input type="number" name="scenario" value="0" placeholder="Scenario % increase">
+
+    <select name="mode">
+        <option value="growth">Growth Scenario</option>
+        <option value="conservative">Conservative Scenario</option>
+        <option value="shock">Shock Scenario</option>
+    </select>
+
+    <button type="submit">Predict</button>
+</form>
+</div>
+
+</body>
+</html>
