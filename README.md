@@ -165,10 +165,12 @@ POST /predict → Upload CSV → Process → Forecast → Dashboard
 ---
 
 ## 📸 Dashboard Preview
-![Dashboard](assets/dashboard.png)
+<img width="1919" height="1031" alt="Screenshot 2026-04-12 080403" src="https://github.com/user-attachments/assets/f1e99f77-8036-41a4-b37c-88a1ea0949da" />
+
 
 ## 📸 Output Example
-![Output](assets/output.png)
+<img width="1918" height="1031" alt="Screenshot 2026-04-12 080429" src="https://github.com/user-attachments/assets/05a3073a-3d4a-4de8-98e8-680a1e2d2a52" />
+
 
 ---
 
