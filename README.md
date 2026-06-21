@@ -264,7 +264,7 @@ Covers:
 - Time-series forecasting  
 - Model validation  
 - Handling uncertainty  
-- Data preprocessing  
+- Data pre-processing  
 - Communicating insights  
 
 ---
